@@ -1,0 +1,7 @@
+cmake-build-debug
+Makefile
+PokerBot
+CMakeCache.txt
+cmake_install.cmake
+.idea/
+CMakeFiles
