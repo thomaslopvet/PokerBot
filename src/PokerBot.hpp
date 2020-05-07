@@ -21,6 +21,7 @@ namespace PokerBot {
         void AddToTable(std::pair<Card::Nbr, Card::Suit>);
         void GiveFunds(int);
         int GetFunds() const;
+        void ResetCards();
         //void AddInfos(//) pour dire au bot ce que les joueurs font
 
         private:

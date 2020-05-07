@@ -49,3 +49,9 @@ int PokerBot::PokerBot::GetFunds() const
 {
     return _funds;
 }
+
+void PokerBot::PokerBot::ResetCards()
+{
+    _table.clear();
+    _hand.clear();
+}
