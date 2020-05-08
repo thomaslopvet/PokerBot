@@ -16,13 +16,16 @@ namespace PokerBot {
         int Shell();
 
         private:
+        void SetPrecedentPlayer();
         static int SelectSuit(char chr);
         static int SelectNbr(char chr);
         static std::pair<Card::Nbr, Card::Suit> CreateCard();
         int Manager(const std::string&);
         void Display();
+        void PlayRound();
         std::vector<std::pair<Card::Nbr, Card::Suit>> _table;
         PokerBot _bot;
+        unsigned int _pot;
     };
 }
 #endif //POKERBOT_GAMEMANAGER_HPP

@@ -45,7 +45,8 @@ namespace PokerBot {
         RAISE = 2,
         FOLD = 3,
         CHECK = 4,
-        NOFUND = 5
+        NOFUND = 5,
+        ERROR = 6,
     };
 }
 #endif //POKERBOT_ENUM_HPP

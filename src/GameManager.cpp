@@ -5,7 +5,7 @@
 */
 #include "GameManager.hpp"
 
-PokerBot::GameManager::GameManager() : _bot(500)
+PokerBot::GameManager::GameManager() : _bot(500), _pot(0)
 {}
 
 int PokerBot::GameManager::Shell()
@@ -41,14 +41,89 @@ int PokerBot::GameManager::Manager(const std::string& str)
     }
     else if (str == "display")
         Display();
-    else if (str == "nextRound") {
+    else if (str == "nextGame") {
         _table.clear();
-        _bot.ResetCards();
+        _bot.NewGame();
     }
+    else if (str == "play") {
+      /*  if (_table.size() < 3 || _bot.GetHand().size() != 5)
+            std::cout << "hand of bot / table not settled properly." << std::endl;
+        else*/
+            PlayRound();
+    }
+    else if (str == "simulate")
+        SetPrecedentPlayer();
     return 0;
 }
 
-void PokerBot::GameManager::Display() {
+void PokerBot::GameManager::SetPrecedentPlayer()
+{
+    int exit = 0;
+    std::string str;
+    std::pair<Response, unsigned int> playerMove;
+    unsigned int playerOldBet;
+
+    while (exit == 0 && std::cin) {
+        std::cout << "Choose from the actions :\n1 = CALL\n2 = RAISE\n3 = FOLD(not permitted)\n4 = CHECK\n5 = NOFUND(not permitted)\n6 = ERROR(not permitted)\n";
+        std::cin >> str;
+        if (!str.empty() && (str[0] >= '1' && str[0] <= '6')) {
+            playerMove.first = static_cast<Response>(str[0] - '0');
+            exit = 1;
+        }
+    }
+    exit = 0;
+    while (exit == 0 && std::cin) {
+        std::cout << "Enter the amount of dollars which has been bet : " << std::endl;
+        std::cin >> str;
+        if (!str.empty() && std::stoi(str) >= 0) {
+            playerMove.second = std::stoi(str);
+            exit = 1;
+        }
+    }
+    exit = 0;
+    while (exit == 0 && std::cin) {
+        std::cout << "Enter the funds of the prec player before the bet : " << std::endl;
+        std::cin >> str;
+        if (!str.empty() && std::stoi(str) >= 0) {
+            playerOldBet = std::stoi(str);
+            exit = 1;
+        }
+    }
+    _bot.SetLastPlayInRound(playerMove, playerOldBet);
+}
+
+void PokerBot::GameManager::PlayRound()
+{
+    std::pair<Response, unsigned int> response = _bot.PlayTurn();
+
+    switch(response.first) {
+    case Response::CALL:
+        _pot += response.second;
+        std::cout << "Bot called and put " << response.second << "$ onto the pot.";
+        break;
+    case Response::FOLD:
+        std::cout << "Bot folded.";
+        break;
+    case Response::RAISE:
+        std::cout << "Bot raised and put " << response.second << "$ onto the pot.";
+        break;
+    case Response::CHECK:
+        std::cout << "Bot checked.";
+        break;
+    case Response::NOFUND:
+        std::cout << "Bot doesn't have money.";
+        break;
+    case Response::ERROR:
+        std::cout << "ERROR : Bot couldn't play. Code : '" << response.second << "'.";
+        break;
+    default:
+        std::cout << "Error : unrecognized response. Response code : '" << response.first << "', second value : '" << response.second << "'.";
+    }
+    std::cout << std::endl;
+}
+
+void PokerBot::GameManager::Display()
+{
     std::vector<std::string> numbers {"AS", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "jack", "queen", "king"};
     std::vector<std::string> suits {"spade", "diamond", "heart", "club"};
 
